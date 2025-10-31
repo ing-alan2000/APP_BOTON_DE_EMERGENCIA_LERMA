@@ -1,0 +1,906 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Descargar App - Botón LERMA</title>
+    <!-- Bootstrap 5 -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=SF+Pro+Display:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --navy-blue: #003366;
+            --carmine-red: #960018;
+            --dark-navy: #001a33;
+            --light-navy: #004080;
+            --dark-bg: #0d1117;
+            --card-bg: #161b22;
+            --text-light: #f0f6fc;
+            --text-gray: #8b949e;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--dark-bg);
+            color: var(--text-light);
+            overflow-x: hidden;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        /* Navigation Bar estilo iOS Dark */
+        .cupertino-navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 88px;
+            background: rgba(22, 27, 34, 0.95);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            padding: 15px;
+            justify-content: flex-end;
+        }
+        
+        .nav-logo {
+            height: 100px;
+        }
+        
+        /* Safe Area para iPhone */
+        .safe-area {
+            padding-top: 88px;
+            padding-bottom: 34px;
+        }
+        
+        /* Cards estilo Cupertino Dark */
+        .cupertino-card {
+            background: var(--card-bg);
+            border-radius: 14px;
+            padding: 20px;
+            margin: 10px 16px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+        
+        /* Buttons estilo Cupertino Dark */
+        .cupertino-button {
+            background: var(--navy-blue);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            padding: 16px;
+            font-size: 17px;
+            font-weight: 600;
+            width: 100%;
+            margin: 8px 0;
+            transition: all 0.2s;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            text-decoration: none;
+            display: inline-block;
+            text-align: center;
+        }
+        
+        .cupertino-button:active {
+            background: var(--light-navy);
+            transform: scale(0.98);
+        }
+        
+        .cupertino-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.5s;
+        }
+        
+        .cupertino-button:active::before {
+            left: 100%;
+        }
+        
+        /* Alert estilo iOS Dark */
+        .cupertino-alert {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.7);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+            padding: 20px;
+        }
+        
+        .alert-container {
+            background: var(--card-bg);
+            border-radius: 14px;
+            width: 100%;
+            max-width: 300px;
+            overflow: hidden;
+            animation: alert-appear 0.3s ease;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+        
+        .alert-title {
+            font-size: 17px;
+            font-weight: 600;
+            padding: 20px;
+            text-align: center;
+            color: var(--text-light);
+        }
+        
+        .alert-message {
+            font-size: 15px;
+            color: var(--text-gray);
+            padding: 0 20px 20px;
+            text-align: center;
+        }
+        
+        .alert-actions {
+            display: flex;
+            border-top: 1px solid rgba(255,255,255,0.1);
+        }
+        
+        .alert-button {
+            flex: 1;
+            padding: 16px;
+            text-align: center;
+            font-size: 17px;
+            font-weight: 600;
+            color: var(--navy-blue);
+            border-right: 1px solid rgba(255,255,255,0.1);
+            transition: background 0.2s;
+            cursor: pointer;
+        }
+        
+        .alert-button:active {
+            background: rgba(255,255,255,0.1);
+        }
+        
+        .alert-button:last-child {
+            border-right: none;
+        }
+        
+        /* Main Screen */
+        .app-icon {
+            width: 100px;
+            height: 100px;
+            background: linear-gradient(135deg, var(--navy-blue), var(--carmine-red));
+            border-radius: 22px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 30px auto 20px;
+            box-shadow: 0 10px 30px rgba(0,51,102,0.4);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .app-icon::before {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle, rgba(255,255,255,0.2) 0%, transparent 70%);
+        }
+        
+        .app-icon i {
+            color: white;
+            font-size: 45px;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.3);
+        }
+        
+        .app-title {
+            font-size: 28px;
+            font-weight: 700;
+            text-align: center;
+            margin-bottom: 8px;
+            background: #960018;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .app-subtitle {
+            font-size: 17px;
+            color: var(--text-gray);
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        /* Feature Grid */
+        .feature-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin: 20px 16px;
+        }
+        
+        .feature-item {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(255,255,255,0.05);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .feature-item::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.05), transparent);
+            transition: left 0.5s;
+        }
+        
+        .feature-item:active {
+            transform: scale(0.95);
+            background: rgba(255,255,255,0.05);
+        }
+        
+        .feature-item:active::before {
+            left: 100%;
+        }
+        
+        .feature-icon {
+            width: 50px;
+            height: 50px;
+            background: var(--navy-blue);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 12px;
+            box-shadow: 0 4px 15px rgba(0,51,102,0.3);
+        }
+        
+        .feature-icon i {
+            color: white;
+            font-size: 24px;
+        }
+        
+        .feature-text {
+            font-size: 15px;
+            font-weight: 500;
+        }
+        
+        /* Installation Steps */
+        .step-item {
+            display: flex;
+            align-items: center;
+            padding: 16px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+        
+        .step-number {
+            width: 28px;
+            height: 28px;
+            background: var(--navy-blue);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 15px;
+            font-weight: 600;
+            margin-right: 12px;
+            box-shadow: 0 2px 8px rgba(0,51,102,0.3);
+        }
+        
+        .step-text {
+            flex: 1;
+            font-size: 16px;
+            color: var(--text-light);
+        }
+        
+        /* WhatsApp Assistant */
+        .whatsapp-assistant {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 1000;
+        }
+        
+        .whatsapp-button {
+            width: 60px;
+            height: 60px;
+            background: #25D366;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 20px rgba(37, 211, 102, 0.4);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .whatsapp-button:active {
+            transform: scale(0.95);
+        }
+        
+        .whatsapp-button i {
+            color: white;
+            font-size: 30px;
+        }
+        
+        .whatsapp-tooltip {
+            position: absolute;
+            bottom: 70px;
+            right: 0;
+            background: var(--card-bg);
+            color: var(--text-light);
+            padding: 10px 15px;
+            border-radius: 10px;
+            font-size: 14px;
+            width: 200px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            border: 1px solid rgba(255,255,255,0.1);
+            opacity: 0;
+            transform: translateY(10px);
+            transition: all 0.3s ease;
+            pointer-events: none;
+        }
+        
+        .whatsapp-button:hover .whatsapp-tooltip,
+        .whatsapp-button:active .whatsapp-tooltip {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        /* Chat Window */
+        .chat-container {
+            position: fixed;
+            bottom: 90px;
+            right: 20px;
+            width: 320px;
+            height: 450px;
+            background: var(--card-bg);
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            display: none;
+            flex-direction: column;
+            z-index: 1001;
+            border: 1px solid rgba(255,255,255,0.1);
+            overflow: hidden;
+        }
+        
+        .chat-header {
+            background: var(--navy-blue);
+            color: white;
+            padding: 15px;
+            display: flex;
+            align-items: center;
+            border-top-left-radius: 15px;
+            border-top-right-radius: 15px;
+        }
+        
+        .chat-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            margin-right: 10px;
+            background: var(--dark-navy);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+        
+        .chat-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .chat-title {
+            font-weight: 600;
+            font-size: 16px;
+        }
+        
+        .chat-status {
+            font-size: 12px;
+            opacity: 0.8;
+        }
+        
+        .chat-close {
+            margin-left: auto;
+            cursor: pointer;
+            font-size: 18px;
+        }
+        
+        .chat-messages {
+            flex: 1;
+            padding: 15px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .message {
+            max-width: 80%;
+            padding: 10px 15px;
+            margin-bottom: 10px;
+            border-radius: 18px;
+            font-size: 14px;
+            line-height: 1.4;
+            position: relative;
+        }
+        
+        .bot-message {
+            align-self: flex-start;
+            background: rgba(255,255,255,0.1);
+            border-bottom-left-radius: 5px;
+        }
+        
+        .user-message {
+            align-self: flex-end;
+            background: var(--navy-blue);
+            border-bottom-right-radius: 5px;
+        }
+        
+        .chat-input-area {
+            padding: 10px;
+            border-top: 1px solid rgba(255,255,255,0.1);
+            display: flex;
+        }
+        
+        .chat-options {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            padding: 0 15px 15px;
+        }
+        
+        .chat-option {
+            background: rgba(255,255,255,0.1);
+            border: none;
+            border-radius: 18px;
+            padding: 8px 15px;
+            font-size: 14px;
+            color: var(--text-light);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .chat-option:active {
+            background: var(--navy-blue);
+        }
+        
+        .whatsapp-contact-button {
+            background: #25D366;
+            color: white;
+            border: none;
+            border-radius: 18px;
+            padding: 10px 20px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 10px auto;
+            transition: all 0.2s;
+        }
+        
+        .whatsapp-contact-button:active {
+            transform: scale(0.98);
+        }
+        
+        .whatsapp-contact-button i {
+            margin-right: 8px;
+        }
+        
+        /* Animaciones */
+        @keyframes alert-appear {
+            from { transform: scale(1.1); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+        
+        @keyframes message-appear {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .message {
+            animation: message-appear 0.3s ease;
+        }
+        
+        /* Responsive */
+        @media (min-width: 768px) {
+            .cupertino-navbar {
+                height: 64px;
+            }
+            
+            .safe-area {
+                padding-top: 64px;
+            }
+            
+            .feature-grid {
+                grid-template-columns: 1fr 1fr 1fr 1fr;
+            }
+            
+            .alert-container {
+                max-width: 400px;
+            }
+            
+            .chat-container {
+                width: 350px;
+                height: 500px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <div class="cupertino-navbar">
+        <img src="img/lerma.png" alt="Lerma Somos Todos" class="nav-logo">
+    </div>
+
+    <!-- Main Screen -->
+    <div class="safe-area">
+        <!-- App Header -->
+        <div class="app-icon">
+            <i class="fas fa-shield-alt"></i>
+        </div>
+        <h1 class="app-title">Botón De Emergencia Lerma</h1>
+        <p class="app-subtitle">Sistema de Seguridad Municipal</p>
+
+        <!-- Feature Grid -->
+        <div class="feature-grid">
+            <div class="feature-item">
+                <div class="feature-icon">
+                    <i class="fas fa-bell"></i>
+                </div>
+                <div class="feature-text">Alertas Rápidas</div>
+            </div>
+            <div class="feature-item">
+                <div class="feature-icon">
+                    <i class="fas fa-map-marker-alt"></i>
+                </div>
+                <div class="feature-text">Geolocalización</div>
+            </div>
+            <div class="feature-item">
+                <div class="feature-icon">
+                    <i class="fas fa-lock"></i>
+                </div>
+                <div class="feature-text">Cifrado Seguro</div>
+            </div>
+            <div class="feature-item">
+                <div class="feature-icon">
+                    <i class="fas fa-mobile-alt"></i>
+                </div>
+                <div class="feature-text">Fácil De Usar</div>
+            </div>
+        </div>
+
+        <!-- Download Section -->
+        <div class="cupertino-card">
+            <h3 style="font-size: 17px; font-weight: 600; margin-bottom: 12px;">Descargar Aplicación</h3>
+            <p style="font-size: 15px; color: var(--text-gray); margin-bottom: 20px;">
+                Instale la aplicación Botón De Emergencia Lerma para acceso rápido a servicios de emergencia.
+            </p>
+            <a href="boton_apk.apk" class="cupertino-button" id="download-button" download>
+                <i class="fas fa-download" style="margin-right: 8px;"></i>
+                Descargar Ahora
+            </a>
+        </div>
+
+        <!-- Installation Guide -->
+        <div class="cupertino-card" id="installation-guide">
+            <h3 style="font-size: 17px; font-weight: 600; margin-bottom: 16px;">Guía de Instalación</h3>
+            
+            <div class="step-item">
+                <div class="step-number">1</div>
+                <div class="step-text">Toque "Instalar" cuando se descargue el archivo</div>
+            </div>
+            <div class="step-item">
+                <div class="step-number">2</div>
+                <div class="step-text">Permitir instalación de fuentes desconocidas si es necesario</div>
+            </div>
+            <div class="step-item">
+                <div class="step-number">3</div>
+                <div class="step-text">Espere a que complete la instalación</div>
+            </div>
+            <div class="step-item" style="border-bottom: none;">
+                <div class="step-number">4</div>
+                <div class="step-text">Toque "Abrir" y conceda los permisos solicitados</div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div style="text-align: center; padding: 30px 16px; color: var(--text-gray); font-size: 13px;">
+            Aplicación desarrollada por Ing. Alan Pérez Martínez - Innovacode<br>
+            Todos los derechos reservados
+        </div>
+    </div>
+
+    <!-- WhatsApp Assistant -->
+    <div class="whatsapp-assistant">
+        <div class="whatsapp-button" id="whatsapp-button">
+            <i class="fab fa-whatsapp"></i>
+            <div class="whatsapp-tooltip">
+                Si necesitas ayuda, no dudes en contactar a soporte técnico
+            </div>
+        </div>
+    </div>
+
+    <!-- Chat Window -->
+    <div class="chat-container" id="chat-container">
+        <div class="chat-header">
+            <div class="chat-avatar">
+                <img src="img/robot.png" alt="Asistente LERMA">
+            </div>
+            <div>
+                <div class="chat-title">Asistente LERMA</div>
+                <div class="chat-status">En línea</div>
+            </div>
+            <div class="chat-close" id="chat-close">
+                <i class="fas fa-times"></i>
+            </div>
+        </div>
+        <div class="chat-messages" id="chat-messages">
+            <!-- Messages will be added here dynamically -->
+        </div>
+        <div class="chat-options" id="chat-options">
+            <!-- Options will be added here dynamically -->
+        </div>
+    </div>
+
+    <!-- Alert -->
+    <div class="cupertino-alert" id="download-alert">
+        <div class="alert-container">
+            <div class="alert-title">Descarga Completada</div>
+            <div class="alert-message">La aplicación se ha descargado correctamente. Proceda con la instalación.</div>
+            <div class="alert-actions">
+                <div class="alert-button" id="alert-ok">Aceptar</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Elementos DOM
+        const downloadButton = document.getElementById('download-button');
+        const downloadAlert = document.getElementById('download-alert');
+        const alertOk = document.getElementById('alert-ok');
+        const whatsappButton = document.getElementById('whatsapp-button');
+        const chatContainer = document.getElementById('chat-container');
+        const chatMessages = document.getElementById('chat-messages');
+        const chatOptions = document.getElementById('chat-options');
+        const chatClose = document.getElementById('chat-close');
+
+        // Estado del chat
+        let chatState = {
+            step: 0,
+            problem: null,
+            device: null,
+            notifications: null,
+            alerts: null
+        };
+
+        // Manejo de descarga real
+        downloadButton.addEventListener('click', function(e) {
+            // Mostrar alerta después de simular descarga
+            setTimeout(() => {
+                downloadAlert.style.display = 'flex';
+            }, 1000);
+        });
+
+        // Cerrar alerta
+        alertOk.addEventListener('click', function() {
+            downloadAlert.style.display = 'none';
+        });
+
+        // Abrir chat
+        whatsappButton.addEventListener('click', function() {
+            chatContainer.style.display = 'flex';
+            resetChat();
+            addBotMessage("¿Tienes algún problema para instalar la app Botón de Emergencia Lerma?");
+            showOptions([
+                { text: "Sí", action: "yesProblem" },
+                { text: "No", action: "noProblem" }
+            ]);
+        });
+
+        // Cerrar chat
+        chatClose.addEventListener('click', function() {
+            chatContainer.style.display = 'none';
+        });
+
+        // Función para agregar mensaje del bot
+        function addBotMessage(text) {
+            const messageDiv = document.createElement('div');
+            messageDiv.className = 'message bot-message';
+            messageDiv.textContent = text;
+            chatMessages.appendChild(messageDiv);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        // Función para agregar mensaje del usuario
+        function addUserMessage(text) {
+            const messageDiv = document.createElement('div');
+            messageDiv.className = 'message user-message';
+            messageDiv.textContent = text;
+            chatMessages.appendChild(messageDiv);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        // Función para mostrar opciones
+        function showOptions(options) {
+            chatOptions.innerHTML = '';
+            options.forEach(option => {
+                const button = document.createElement('button');
+                button.className = 'chat-option';
+                button.textContent = option.text;
+                button.addEventListener('click', function() {
+                    addUserMessage(option.text);
+                    handleUserResponse(option.action);
+                });
+                chatOptions.appendChild(button);
+            });
+        }
+
+        // Función para manejar respuestas del usuario
+        function handleUserResponse(action) {
+            switch(action) {
+                case "yesProblem":
+                    chatState.problem = true;
+                    addBotMessage("Con gusto te apoyaremos, por favor contacta a soporte técnico");
+                    showWhatsAppButton("Necesito asistencia técnica para la instalación del Botón de Emergencia Lerma");
+                    break;
+                case "noProblem":
+                    chatState.problem = false;
+                    addBotMessage("¿Necesitas alguna aclaración adicional? Contáctanos");
+                    showWhatsAppButton("Solo necesito aclaraciones sobre el Botón de Emergencia Lerma");
+                    break;
+                case "android":
+                    chatState.device = "android";
+                    addBotMessage("Perfecto, revisa que tu versión sea 8.0 o superior. ¿Deseas soporte?");
+                    showOptions([
+                        { text: "Sí", action: "yesSupport" },
+                        { text: "No", action: "noSupport" }
+                    ]);
+                    break;
+                case "ios":
+                    chatState.device = "ios";
+                    addBotMessage("Revisa que la app tenga permisos de instalación. ¿Deseas asistencia?");
+                    showOptions([
+                        { text: "Sí", action: "yesSupport" },
+                        { text: "No", action: "noSupport" }
+                    ]);
+                    break;
+                case "yesNotifications":
+                    chatState.notifications = true;
+                    addBotMessage("Con gusto podemos ayudarte, por favor contacta a soporte técnico");
+                    showWhatsAppButton("Tengo problemas con las notificaciones de la app Botón Lerma");
+                    break;
+                case "noNotifications":
+                    chatState.notifications = false;
+                    addBotMessage("Genial, todo parece funcionar correctamente. ¿Quieres más información?");
+                    showOptions([
+                        { text: "Sí", action: "yesInfo" },
+                        { text: "No", action: "noInfo" }
+                    ]);
+                    break;
+                case "yesAlerts":
+                    chatState.alerts = true;
+                    addBotMessage("Para configurar alertas automáticas, contacta a soporte técnico");
+                    showWhatsAppButton("Necesito configurar alertas automáticas en la app Botón Lerma");
+                    break;
+                case "noAlerts":
+                    chatState.alerts = false;
+                    addBotMessage("Está bien, puedes usar la app manualmente para enviar alertas");
+                    setTimeout(() => {
+                        addBotMessage("¿Necesitas ayuda adicional con la configuración?");
+                        showOptions([
+                            { text: "Sí", action: "yesSupport" },
+                            { text: "No", action: "noSupport" }
+                        ]);
+                    }, 1000);
+                    break;
+                case "yesSupport":
+                case "yesInfo":
+                    addBotMessage("Perfecto, contacta a nuestro equipo de soporte");
+                    showWhatsAppButton("Necesito soporte técnico para la app Botón Lerma");
+                    break;
+                case "noSupport":
+                case "noInfo":
+                    addBotMessage("Está bien, si necesitas ayuda en el futuro no dudes en contactarnos. ¡Que tengas un buen día!");
+                    setTimeout(() => {
+                        chatContainer.style.display = 'none';
+                    }, 2000);
+                    break;
+                default:
+                    // Preguntas adicionales después del problema inicial
+                    if (chatState.step === 0) {
+                        chatState.step = 1;
+                        addBotMessage("¿Tu dispositivo es Android o iOS?");
+                        showOptions([
+                            { text: "Android", action: "android" },
+                            { text: "iOS", action: "ios" }
+                        ]);
+                    } else if (chatState.step === 1) {
+                        chatState.step = 2;
+                        addBotMessage("¿Has tenido problemas con notificaciones o alertas de la app?");
+                        showOptions([
+                            { text: "Sí", action: "yesNotifications" },
+                            { text: "No", action: "noNotifications" }
+                        ]);
+                    } else if (chatState.step === 2) {
+                        chatState.step = 3;
+                        addBotMessage("¿Deseas configurar alertas de emergencia automáticas?");
+                        showOptions([
+                            { text: "Sí", action: "yesAlerts" },
+                            { text: "No", action: "noAlerts" }
+                        ]);
+                    }
+            }
+        }
+
+        // Función para mostrar botón de WhatsApp
+        function showWhatsAppButton(message) {
+            chatOptions.innerHTML = '';
+            const button = document.createElement('button');
+            button.className = 'whatsapp-contact-button';
+            button.innerHTML = '<i class="fab fa-whatsapp"></i> Contáctanos';
+            button.addEventListener('click', function() {
+                const encodedMessage = encodeURIComponent(message);
+                window.open(`https://wa.me/527222395276?text=${encodedMessage}`, '_blank');
+            });
+            chatOptions.appendChild(button);
+        }
+
+        // Función para resetear el chat
+        function resetChat() {
+            chatMessages.innerHTML = '';
+            chatOptions.innerHTML = '';
+            chatState = {
+                step: 0,
+                problem: null,
+                device: null,
+                notifications: null,
+                alerts: null
+            };
+        }
+
+        // Efectos táctiles mejorados
+        document.querySelectorAll('.feature-item, .cupertino-button').forEach(item => {
+            item.addEventListener('touchstart', function() {
+                this.style.transform = 'scale(0.98)';
+            });
+            
+            item.addEventListener('touchend', function() {
+                this.style.transform = 'scale(1)';
+            });
+        });
+
+        // Bloquear botón de regresar del navegador
+        history.pushState(null, null, location.href);
+        window.onpopstate = function(event) {
+            history.go(1);
+        };
+    </script>
+</body>
+</html>

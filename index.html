@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Botón de Emergencia LERMA</title>
+    <!-- Bootstrap 5 -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=SF+Pro+Display:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --cupertino-blue: #0A84FF;
+            --cupertino-gray-1: #8E8E93;
+            --cupertino-gray-2: #636366;
+            --cupertino-gray-3: #48484A;
+            --cupertino-gray-4: #3A3A3C;
+            --cupertino-gray-5: #2C2C2E;
+            --cupertino-gray-6: #1C1C1E;
+            --cupertino-red: #FF453A;
+            --cupertino-green: #30D158;
+            --cupertino-orange: #FF9F0A;
+            --cupertino-purple: #BF5AF2;
+            --cupertino-background: #000000;
+            --cupertino-card: #1C1C1E;
+            --cupertino-navbar: #1C1C1E;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--cupertino-background);
+            color: #FFFFFF;
+            overflow: hidden;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        /* Video Screen - Pantalla completa */
+        #video-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: black;
+            z-index: 9999;
+            display: none;
+        }
+        
+        #video-background {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        /* Loading inicial */
+        .initial-loading {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: black;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 10000;
+            color: white;
+            font-size: 18px;
+        }
+
+        /* Deshabilitar interacciones */
+        .no-interaction {
+            pointer-events: none;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+        }
+    </style>
+</head>
+<body class="no-interaction">
+    <!-- Loading inicial -->
+    <div class="initial-loading" id="initial-loading">
+        <div class="text-center">
+            <div class="spinner-border text-primary mb-3" role="status">
+                <span class="visually-hidden">Cargando...</span>
+            </div>
+            <div>Iniciando aplicación LERMA...</div>
+        </div>
+    </div>
+
+    <!-- Video Screen -->
+    <div id="video-screen">
+        <video id="video-background" autoplay muted playsinline>
+            <source src="img/vid1.mp4" type="video/mp4">
+            Tu navegador no soporta el elemento de video.
+        </video>
+    </div>
+
+    <script>
+        // Elementos DOM
+        const videoElement = document.getElementById('video-background');
+        const initialLoading = document.getElementById('initial-loading');
+        const videoScreen = document.getElementById('video-screen');
+
+        // ===== BLOQUEO COMPLETO DEL BOTÓN ATRÁS =====
+        
+        // 1. Eliminar el historial de navegación
+        history.pushState(null, null, location.href);
+        
+        // 2. Bloquear el botón físico/gesto de retroceso
+        window.addEventListener('popstate', function(event) {
+            history.pushState(null, null, location.href);
+            // Opcional: Redirigir a la misma página para reforzar el bloqueo
+            window.location.href = window.location.href;
+        });
+
+        // 3. Prevenir navegación con teclado (Alt + Flecha izquierda)
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Backspace' || 
+                (e.altKey && e.key === 'ArrowLeft') ||
+                (e.ctrlKey && e.key === 'ArrowLeft')) {
+                e.preventDefault();
+                e.stopPropagation();
+                return false;
+            }
+        });
+
+        // 4. Bloquear gestos de navegación en dispositivos táctiles
+        let startX = 0;
+        document.addEventListener('touchstart', function(e) {
+            startX = e.touches[0].clientX;
+        });
+
+        document.addEventListener('touchmove', function(e) {
+            const currentX = e.touches[0].clientX;
+            // Detectar gesto de deslizar desde el borde izquierdo
+            if (startX < 50 && currentX - startX > 100) {
+                e.preventDefault();
+                e.stopPropagation();
+            }
+        });
+
+        // 5. Reforzar el estado actual en el historial
+        setInterval(function() {
+            history.replaceState(null, null, location.href);
+        }, 1000);
+
+        // ===== FIN BLOQUEO BOTÓN ATRÁS =====
+
+        // Configuración del video para reproducción automática
+        videoElement.muted = true; // Muted para mejor compatibilidad con auto-play
+        videoElement.playsinline = true; // Para iOS
+        videoElement.setAttribute('playsinline', ''); // Para Safari
+
+        // Esperar a que la página cargue completamente
+        window.addEventListener('load', function() {
+            console.log('Página completamente cargada - iniciando video automático');
+            startAutomaticVideoPlayback();
+        });
+
+        // Función para iniciar la reproducción automática del video
+        function startAutomaticVideoPlayback() {
+            // Mostrar el contenedor del video
+            videoScreen.style.display = 'block';
+            
+            // Intentar reproducir automáticamente
+            const playPromise = videoElement.play();
+            
+            if (playPromise !== undefined) {
+                playPromise.then(() => {
+                    // Reproducción exitosa
+                    console.log('Video reproduciéndose automáticamente');
+                    initialLoading.style.display = 'none';
+                    
+                    // Una vez que empiece a reproducirse, activar el sonido
+                    videoElement.muted = false;
+                    videoElement.volume = 1.0;
+                    
+                }).catch(error => {
+                    // Falló el auto-play, usar estrategia alternativa
+                    console.log('Auto-play falló, usando estrategia alternativa:', error);
+                    handleAutoPlayFailure();
+                });
+            }
+        }
+
+        // Estrategia alternativa si falla el auto-play
+        function handleAutoPlayFailure() {
+            // Ocultar loading y mostrar video
+            initialLoading.style.display = 'none';
+            videoScreen.style.display = 'block';
+            
+            // Forzar reproducción con sonido
+            videoElement.muted = false;
+            videoElement.volume = 1.0;
+            
+            // Intentar reproducir nuevamente
+            videoElement.play().then(() => {
+                console.log('Video iniciado después de fallo inicial');
+            }).catch(finalError => {
+                console.log('Error final al reproducir video:', finalError);
+                // Si todo falla, redirigir directamente
+                redirectToNextPage();
+            });
+        }
+
+        // Manejo del video - cuando termina, redirigir a carga.html
+        videoElement.addEventListener('ended', function() {
+            console.log('Video terminado, redirigiendo...');
+            redirectToNextPage();
+        });
+
+        // Manejar cuando el video puede reproducirse
+        videoElement.addEventListener('canplay', function() {
+            console.log('Video listo para reproducirse');
+        });
+
+        // Manejar errores de carga del video
+        videoElement.addEventListener('error', function(e) {
+            console.error('Error cargando el video:', e);
+            // Si hay error, redirigir directamente
+            redirectToNextPage();
+        });
+
+        // Manejar progreso de carga
+        videoElement.addEventListener('loadeddata', function() {
+            console.log('Datos del video cargados');
+            initialLoading.style.display = 'none';
+        });
+
+        // Función para redirigir a la siguiente página
+        function redirectToNextPage() {
+            setTimeout(() => {
+                window.location.href = 'carga.html';
+            }, 2000);
+        }
+
+        // Si el video no carga en 8 segundos, redirigir
+        setTimeout(() => {
+            if (initialLoading.style.display !== 'none') {
+                console.log('Timeout - redirigiendo por carga lenta');
+                redirectToNextPage();
+            }
+        }, 8000);
+
+        // Prevenir cualquier interacción con el video
+        videoElement.addEventListener('contextmenu', function(e) {
+            e.preventDefault();
+            return false;
+        });
+
+        // Prevenir pausa por clics
+        videoElement.addEventListener('click', function(e) {
+            e.preventDefault();
+            return false;
+        });
+
+        // Prevenir controles de teclado (añadido al bloqueo existente)
+        document.addEventListener('keydown', function(e) {
+            if (e.keyCode === 32 || // Space
+                e.keyCode === 75 || // K
+                e.keyCode === 80 || // P
+                e.keyCode === 8 ||  // Backspace
+                (e.altKey && e.keyCode === 37)) { // Alt + Left arrow
+                e.preventDefault();
+                return false;
+            }
+        });
+
+        // Manejar la visibilidad de la página - NO pausar el video
+        document.addEventListener('visibilitychange', function() {
+            if (document.hidden) {
+                // Cuando la página se oculta, continuar reproduciendo
+                // pero en silencio para ahorrar recursos
+                videoElement.volume = 0.1;
+            } else {
+                // Cuando la página se vuelve visible, restaurar volumen
+                videoElement.volume = 1.0;
+            }
+        });
+
+        // Precargar el video para mejor performance
+        videoElement.preload = "auto";
+        videoElement.load();
+    </script>
+</body>
+</html>
